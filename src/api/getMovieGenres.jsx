@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 export const useMovieGenres = () => {
   const [genreList, setGenreList] = useState([]);
+  const [loadingGenre, setLoadingGenre] = useState(true);
 
   useEffect(() => {
     const fetchGenres = async () => {
@@ -19,11 +20,14 @@ export const useMovieGenres = () => {
         const response = await fetch(url, options);
         const data = await response.json();
         setGenreList(data.genres);
-      } catch (error) {}
+      } catch (error) {
+      } finally {
+        setLoadingGenre(false);
+      }
     };
 
     fetchGenres();
   }, []);
 
-  return { genreList };
+  return { genreList, loadingGenre };
 };

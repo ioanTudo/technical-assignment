@@ -9,19 +9,15 @@ export const MovieInfo = ({ handleDelete }) => {
 
   return (
     <TemplatePageDisplay>
-      {movieInfo ? (
-        <MoviesInfoDisplay
-          id={movieInfo.id}
-          title={movieInfo.title}
-          imageUrl={movieInfo.poster_path}
-          overview={movieInfo.overview}
-          release_date={movieInfo.release_date}
-          genres={movieInfo.genres}
-          onDelete={() => handleDelete(movieInfo.id)}
-        />
-      ) : (
-        <div>Movie not found</div>
-      )}
+      <MoviesInfoDisplay
+        id={movieInfo.id}
+        title={movieInfo.title}
+        imageUrl={movieInfo.poster_path}
+        overview={movieInfo.overview}
+        release_date={movieInfo.release_date}
+        genres={movieInfo.genres}
+        onDelete={() => handleDelete(movieInfo.id)}
+      />
     </TemplatePageDisplay>
   );
 };

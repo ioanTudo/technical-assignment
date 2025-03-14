@@ -4,6 +4,8 @@ export const useSearch = (query, currentPageProp, genreId) => {
   const [movieSearchList, setMovieSearchList] = useState([]);
   const [prevGenre, setGenre] = useState(genreId);
   const [prevQuery, setPrevQuery] = useState(query);
+  const [errorMsgDiscover, setErrorMsgDiscover] = useState("");
+  const [loadingDiscover, setLoadingDiscover] = useState(true);
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -34,6 +36,10 @@ export const useSearch = (query, currentPageProp, genreId) => {
         const response = await fetch(url, options);
         const data = await response.json();
 
+        if (!data.results) {
+          throw new Error(response.status);
+        }
+
         const currentResults = resetPage ? [] : movieSearchList;
         setMovieSearchList([...currentResults, ...data.results]);
 
@@ -41,11 +47,19 @@ export const useSearch = (query, currentPageProp, genreId) => {
           setGenre(genreId);
           setPrevQuery(query);
         }
-      } catch (error) {}
+      } catch (error) {
+        if (error.message.includes("404")) {
+          setErrorMsgDiscover("movies not found");
+        } else if (error.message.includes("503")) {
+          setErrorMsgDiscover("problem with the server");
+        }
+      } finally {
+        setLoadingDiscover(false);
+      }
     };
 
     fetchMovies();
   }, [currentPageProp, query, genreId]);
 
-  return { movieSearchList };
+  return { movieSearchList, errorMsgDiscover, loadingDiscover };
 };

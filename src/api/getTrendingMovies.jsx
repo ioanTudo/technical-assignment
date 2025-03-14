@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 
 const useTrendingMovies = () => {
   const [trendingMovies, setTrendingMovies] = useState([]);
+  const [errorMsgTrending, setErrorMsgTrending] = useState("");
 
   useEffect(() => {
     const fetchTrendingMovies = async () => {
@@ -23,16 +24,22 @@ const useTrendingMovies = () => {
         const data = await response.json();
 
         if (!data.results) {
-          throw new Error("No movies found");
+          throw new Error(response.status);
         }
         setTrendingMovies(data.results);
-      } catch (error) {}
+      } catch (error) {
+        if (error.message.includes("404")) {
+          setErrorMsgTrending("movies not found");
+        } else if (error.message.includes("503")) {
+          setErrorMsgTrending("problem with the server");
+        }
+      }
     };
 
     fetchTrendingMovies();
   }, []);
 
-  return { trendingMovies };
+  return { trendingMovies, errorMsgTrending };
 };
 
 export default useTrendingMovies;

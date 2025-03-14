@@ -5,16 +5,8 @@ import useRecommendedMovieAndRecently from "../Hooks/useRecommendedMovie";
 export const TemplateMovieDisplay = ({
   title,
   movieType = [],
-  isTrending = false,
-  isReccomendedAndRecentlyViewed = false,
-  isDiscover = false,
-  isLoadMore = false,
-  isTopRated = false,
-  handleAddToReccomendAndRecently,
-  currentPage,
-  topRatedCurrentPage,
-  totalPages,
-  loadMore,
+  error,
+  loading,
 }) => {
   const { setRecentlyViewed, setRecommended } =
     useRecommendedMovieAndRecently();
@@ -48,37 +40,43 @@ export const TemplateMovieDisplay = ({
   return (
     <div className="movie_display_wrapper">
       <h1 style={{ textAlign: "left" }}>{title}</h1>
-
-      <div className="movies_container">
-        {movieType.length === 0 ? (
-          <p>No movies available</p>
-        ) : (
-          movieType.map((movie, index) => (
-            <div key={index} className="movie_item">
-              <Link
-                onClick={() => addToRecentlyViewed(movie)}
-                className="linkToMovie"
-                to={`/movies/${movie.id}/${
-                  movie.original_title || movie.imageUrl
-                }`}
-              >
-                <div
-                  style={{
-                    backgroundImage: movie.imageUrl
-                      ? `url(https://image.tmdb.org/t/p/w500/${movie.imageUrl})`
-                      : `url(https://image.tmdb.org/t/p/w500/${movie.poster_path})`,
-                  }}
-                  className="movie_container"
+      {movieType.length === 0 && <p>No movies yet</p>}
+      {loading ? (
+        <span class="loader"></span>
+      ) : (
+        <div className="movies_container">
+          {error ? (
+            <p style={{ color: "red", fontWeight: "bold", fontSize: "16px" }}>
+              {error}
+            </p>
+          ) : (
+            movieType.map((movie, index) => (
+              <div key={index} className="movie_item">
+                <Link
+                  onClick={() => addToRecentlyViewed(movie)}
+                  className="linkToMovie"
+                  to={`/movies/${movie.id}/${
+                    movie.original_title || movie.imageUrl
+                  }`}
                 >
-                  <div className="title_container">
-                    <span>{movie.original_title}</span>
+                  <div
+                    style={{
+                      backgroundImage: movie.imageUrl
+                        ? `url(https://image.tmdb.org/t/p/w500/${movie.imageUrl})`
+                        : `url(https://image.tmdb.org/t/p/w500/${movie.poster_path})`,
+                    }}
+                    className="movie_container"
+                  >
+                    <div className="title_container">
+                      <span>{movie.original_title}</span>
+                    </div>
                   </div>
-                </div>
-              </Link>
-            </div>
-          ))
-        )}
-      </div>
+                </Link>
+              </div>
+            ))
+          )}
+        </div>
+      )}
     </div>
   );
 };

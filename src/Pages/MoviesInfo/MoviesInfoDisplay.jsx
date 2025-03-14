@@ -2,17 +2,19 @@ import { useParams } from "react-router";
 import useAddTofav from "../../Components/Hooks/useAddtoFav";
 import "./MovieInfo.css";
 import { Comments } from "./Comments";
+import useMovieInfo from "../../api/getMovieInfo";
 
 export const MoviesInfoDisplay = ({
   title,
   imageUrl,
   overview,
   release_date,
-  id,
+
   genres = [],
 }) => {
   const { movieId } = useParams();
   const { favouriteMovie, handleAddToFav, handleDelete } = useAddTofav();
+  const { loading } = useMovieInfo();
 
   const isFavourite = favouriteMovie.some((movie) => movie.id === movieId);
 
@@ -20,10 +22,14 @@ export const MoviesInfoDisplay = ({
     <div className="movie_wrapper">
       <div className="movieInfo_container">
         <div className="img_container">
-          <img
-            src={`https://image.tmdb.org/t/p/w500/${imageUrl}`}
-            alt={title}
-          />
+          {loading ? (
+            <span class="loader"></span>
+          ) : (
+            <img
+              src={`https://image.tmdb.org/t/p/w500/${imageUrl}`}
+              alt={title}
+            />
+          )}
         </div>
       </div>
 

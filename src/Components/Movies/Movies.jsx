@@ -16,12 +16,19 @@ export const Movies = () => {
   const [selectedGenre, setSelectedGenre] = useState("");
   const { currentPage, loadMore, loadMoreTopRated, topRatedCurrentPage } =
     usePaginationMovies();
-  const { genreList = [] } = useMovieGenres();
+  const { genreList = [], loadingGenre } = useMovieGenres();
   const { query } = useContext(QueryContext);
-  const { movieSearchList = [] } = useSearch(query, currentPage, selectedGenre);
-  const { trendingMovies } = useTrendingMovies();
+  const {
+    movieSearchList = [],
+    errorMsgDiscover,
+    loadingDiscover,
+  } = useSearch(query, currentPage, selectedGenre);
+  const { trendingMovies, errorMsgTrending } = useTrendingMovies();
   const { recommended, recentlyViewed } = useRecommendedMovieAndRecently();
-  const { topRatedMovies = [] } = useTopRatedMovies(topRatedCurrentPage, query);
+  const { topRatedMovies = [], errorTopRatedMsg } = useTopRatedMovies(
+    topRatedCurrentPage,
+    query
+  );
 
   return (
     <div className="page_wrapper">
@@ -32,13 +39,20 @@ export const Movies = () => {
       />
 
       <div className="movies_wrapper">
-        <TemplateMovieDisplay
-          title={"Discover movies"}
-          movieType={movieSearchList}
-          isDiscover={true}
-          isLoadMore={true}
-          currentPage={currentPage}
-        />
+        {loadingGenre ? (
+          <span className="loader"></span>
+        ) : (
+          <TemplateMovieDisplay
+            title={"Discover movies"}
+            movieType={movieSearchList}
+            isDiscover={true}
+            isLoadMore={true}
+            currentPage={currentPage}
+            error={errorMsgDiscover}
+            loading={loadingDiscover}
+          />
+        )}
+
         <Pagination currentPage={currentPage} loadMore={loadMore} />
       </div>
 
@@ -47,6 +61,7 @@ export const Movies = () => {
           title={"Recently viewed"}
           movieType={recentlyViewed}
         />
+
         <TemplateMovieDisplay
           title={"Recommended movies"}
           movieType={recommended}
@@ -54,6 +69,7 @@ export const Movies = () => {
         <TemplateMovieDisplay
           title={"Trending movies"}
           movieType={trendingMovies}
+          error={errorMsgTrending}
         />
 
         <div className="movies_wrapper">
@@ -62,6 +78,7 @@ export const Movies = () => {
             movieType={topRatedMovies}
             isTopRated={true}
             topRatedCurrentPage={topRatedCurrentPage}
+            error={errorTopRatedMsg}
           />
           <Pagination
             currentPage={topRatedCurrentPage}

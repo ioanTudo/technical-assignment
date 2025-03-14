@@ -3,10 +3,12 @@ import { useEffect, useState } from "react";
 const useTopRatedMovies = (currentPageProp, query) => {
   const [topRatedMovies, setTopRatedMovies] = useState([]);
   const [prevQuery, setPrevQuery] = useState(query);
+  const [errorTopRatedMsg, setErrorTopRatedMsg] = useState("");
 
   useEffect(() => {
     const fetchTopRated = async () => {
       const resetPage = query !== prevQuery;
+
       try {
         const url = `https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=${currentPageProp}&query=${query}`;
         const options = {
@@ -22,20 +24,27 @@ const useTopRatedMovies = (currentPageProp, query) => {
         const data = await response.json();
 
         if (!data.results) {
-          throw new Error("No movies found");
+          throw new Error(response.status);
         }
+
         if (resetPage) {
           setPrevQuery();
         }
 
         setTopRatedMovies(() => [...topRatedMovies, ...data.results]);
-      } catch (error) {}
+      } catch (error) {
+        if (error.message.includes("404")) {
+          setErrorTopRatedMsg("movies not found");
+        } else if (error.message.includes("503")) {
+          setErrorTopRatedMsg("problem with the server");
+        }
+      }
     };
 
     fetchTopRated();
   }, [currentPageProp, query]);
 
-  return { topRatedMovies };
+  return { topRatedMovies, errorTopRatedMsg };
 };
 
 export default useTopRatedMovies;

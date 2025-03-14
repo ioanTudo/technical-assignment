@@ -5,9 +5,10 @@ import "../../Components/Movies/Movies.css";
 
 import "./FavMovie.css";
 import { TemplateMovieDisplay } from "../../Components/Templates/TemplateMovieDisplay.jsx";
+import { Link } from "react-router";
 
 export const FavMoviesPage = () => {
-  const [favourite, setFavourite] = useContext(FavouriteContext);
+  const [favourite] = useContext(FavouriteContext);
 
   return (
     <TemplatePageDisplay>
@@ -15,7 +16,16 @@ export const FavMoviesPage = () => {
         <h1 style={{ textAlign: "center" }}>My list</h1>
         <div className="movie_display_wrapper">
           <div className="movies_wrapper">
-            <TemplateMovieDisplay movieType={favourite} />
+            {favourite.length === 0 ? (
+              <div className="noMovies_container">
+                <p> No movies added to favorites</p>
+                <Link to={"/"}>
+                  <p>back to main menu</p>
+                </Link>
+              </div>
+            ) : (
+              <TemplateMovieDisplay movieType={favourite} />
+            )}
           </div>
         </div>
       </div>
