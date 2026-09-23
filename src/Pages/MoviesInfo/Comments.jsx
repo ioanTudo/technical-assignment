@@ -14,7 +14,7 @@ export const Comments = ({ commId }) => {
     } catch (error) {
       setComments([]);
     }
-  }, []);
+  }, [commId]);
 
   const handleAddComm = (id) => {
     if (!comments.find((comm) => comm.id === id)) {
