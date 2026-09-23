@@ -42,7 +42,7 @@ export const TemplateMovieDisplay = ({
       <h1 style={{ textAlign: "left" }}>{title}</h1>
       {movieType.length === 0 && <p>No movies yet</p>}
       {loading ? (
-        <span class="loader"></span>
+        <span className="loader"></span>
       ) : (
         <div className="movies_container">
           {error ? (
