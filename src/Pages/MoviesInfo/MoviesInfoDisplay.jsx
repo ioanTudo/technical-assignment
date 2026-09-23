@@ -23,7 +23,7 @@ export const MoviesInfoDisplay = ({
       <div className="movieInfo_container">
         <div className="img_container">
           {loading ? (
-            <span class="loader"></span>
+            <span className="loader"></span>
           ) : (
             <img
               src={`https://image.tmdb.org/t/p/w500/${imageUrl}`}
