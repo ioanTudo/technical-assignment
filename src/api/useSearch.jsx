@@ -1,16 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export const useSearch = (query, currentPageProp, genreId) => {
   const [movieSearchList, setMovieSearchList] = useState([]);
-  const [prevGenre, setGenre] = useState(genreId);
-  const [prevQuery, setPrevQuery] = useState(query);
+  const previousGenreRef = useRef(genreId);
+  const previousQueryRef = useRef(query);
   const [errorMsgDiscover, setErrorMsgDiscover] = useState("");
   const [loadingDiscover, setLoadingDiscover] = useState(true);
 
   useEffect(() => {
     const fetchMovies = async () => {
-      const resetPage = query !== prevQuery || genreId !== prevGenre;
+      const resetPage =
+        query !== previousQueryRef.current || genreId !== previousGenreRef.current;
       const nextPage = resetPage ? 1 : currentPageProp + 1;
+
+      setLoadingDiscover(true);
 
       try {
         let url;
@@ -40,12 +43,15 @@ export const useSearch = (query, currentPageProp, genreId) => {
           throw new Error(response.status);
         }
 
-        const currentResults = resetPage ? [] : movieSearchList;
-        setMovieSearchList([...currentResults, ...data.results]);
+        setErrorMsgDiscover("");
+        setMovieSearchList((movies) => [
+          ...(resetPage ? [] : movies),
+          ...data.results,
+        ]);
 
         if (resetPage) {
-          setGenre(genreId);
-          setPrevQuery(query);
+          previousGenreRef.current = genreId;
+          previousQueryRef.current = query;
         }
       } catch (error) {
         if (error.message.includes("404")) {
