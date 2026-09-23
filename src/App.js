@@ -17,7 +17,7 @@ function App() {
     <StrictMode>
       <QueryContext.Provider value={{ query, setQuery }}>
         <FavouriteContext.Provider value={favouriteContext}>
-          <BrowserRouter basename="/technical-assignment">
+          <BrowserRouter>
             <Routes>
               <Route index element={<Home />} />
               <Route
