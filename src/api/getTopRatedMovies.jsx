@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const useTopRatedMovies = (currentPageProp, query) => {
   const [topRatedMovies, setTopRatedMovies] = useState([]);
-  const [prevQuery, setPrevQuery] = useState(query);
+  const previousQueryRef = useRef(query);
   const [errorTopRatedMsg, setErrorTopRatedMsg] = useState("");
 
   useEffect(() => {
     const fetchTopRated = async () => {
-      const resetPage = query !== prevQuery;
+      const resetPage = query !== previousQueryRef.current;
 
       try {
         const url = `https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=${currentPageProp}&query=${query}`;
@@ -16,7 +16,7 @@ const useTopRatedMovies = (currentPageProp, query) => {
           headers: {
             accept: "application/json",
             Authorization:
-              "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlYjE0YzM1YzU0ZDJjZDM4Yzk0NjkwY2UzMDI3MDk0ZSIsIm5iZiI6MTczODA5MzczMy41MjcsInN1YiI6IjY3OTkzNGE1MWJlMTE2NDA5YzIzODk4ZSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.nTebm3iPBrMjCJcgW-ZUykU1iF95u99wfUTXy5g9Y4M",
+              "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlYjE0YzM1ZTU0ZDJjZDM4Yzk0NjkwY2UzMDI3MDk0ZSIsIm5iZiI6MTczODA5MzczMy41MjcsInN1YiI6IjY3OTkzNGE1MWJlMTE2NDA5YzIzODk4ZSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.nTebm3iPBrMjCJcgW-ZUykU1iF95u99wfUTXy5g9Y4M",
           },
         };
 
@@ -27,11 +27,11 @@ const useTopRatedMovies = (currentPageProp, query) => {
           throw new Error(response.status);
         }
 
-        if (resetPage) {
-          setPrevQuery();
-        }
-
-        setTopRatedMovies(() => [...topRatedMovies, ...data.results]);
+        setErrorTopRatedMsg("");
+        setTopRatedMovies((movies) =>
+          resetPage ? data.results : [...movies, ...data.results]
+        );
+        previousQueryRef.current = query;
       } catch (error) {
         if (error.message.includes("404")) {
           setErrorTopRatedMsg("movies not found");
