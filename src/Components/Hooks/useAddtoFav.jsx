@@ -3,7 +3,7 @@ import { FavouriteContext } from "../../Contexts/Contexts";
 
 const useAddTofav = () => {
   const [favouriteMovie, setFavouriteMovie] = useState([]);
-  const [favourite, setFavourite] = useContext(FavouriteContext);
+  const [, setFavourite] = useContext(FavouriteContext);
 
   useEffect(() => {
     try {
@@ -14,7 +14,7 @@ const useAddTofav = () => {
       setFavouriteMovie([]);
       setFavourite([]);
     }
-  }, []);
+  }, [setFavourite]);
 
   const handleAddToFav = (movie) => {
     if (!favouriteMovie.find((fav) => fav.id === movie.id)) {
